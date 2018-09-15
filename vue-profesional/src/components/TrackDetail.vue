@@ -15,7 +15,7 @@ div
 			.column.is-8
 				.panel
 					.panel-heading
-						h1.title {{ track.name }}
+						h1.title {{ trackTitle }}
 					.panel-block
 						article.media
 							.media-content
@@ -35,10 +35,10 @@ div
 
 <script>
 
-import trackService from '@/services/track'
 import PmHeader from '@/components/layout/Header.vue'
 import PmLoader from '@/components/shared/Loader.vue'
 import trackMixin from '@/mixins/track'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
 
@@ -51,19 +51,30 @@ export default {
 
 	data () {
 		return {
-			track: {},
 			isLoading: true
 		}
+	},
+
+	computed: {
+		...mapState(['track']),
+		...mapGetters(['trackTitle'])
 	},
 
 	created () {
 		const id = this.$route.params.id
 
-		trackService.getById(id)
-			.then(res => {
-				this.track = res
-				this.isLoading = false
-			})
+		if (!this.track || !this.track.id || this.track.id !== id) {
+			this.getTrackById({ id })
+				.then(() => {
+					this.isLoading = false
+				})
+		} else {
+			this.isLoading = false
+		}
+	},
+
+	methods: {
+		...mapActions(['getTrackById'])
 	}
 }
 </script>

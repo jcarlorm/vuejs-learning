@@ -1,5 +1,5 @@
 <template lang="pug">
-	.content(v-if="track")
+	.content(v-if="track.album")
 		p
 			img(:src="track.album.images[0].url")
 		p.espacio
@@ -10,21 +10,16 @@
 </template>
 
 <script>
+
+import { mapState } from 'vuex'
+
 export default {
 
 	name: 'Player',
-	
-	data () {
-		return {
-			track: null
-		}
-	},
 
-	created () {
-		this.$bus.$on('set-track', (track) => {
-			this.track = track
-		})
-	} 
+	computed: {
+		...mapState(['track'])
+	}
 }
 </script>
 
